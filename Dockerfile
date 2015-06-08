@@ -1,4 +1,4 @@
-FROM vibioh/nginx-arm:latest
+FROM vibioh/nginx:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 RUN apk --update add php-mysql php-zlib \

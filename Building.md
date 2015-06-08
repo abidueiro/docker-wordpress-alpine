@@ -82,8 +82,7 @@ We will use nginx as a reverse proxy. It will redirect requests base on domain's
 
 ```bash
 apt-get install -y nginx
-cd /etc/nginx/sites-available/
-cp default localhost
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/localhost
 ln -s /etc/nginx/sites-available/localhost /etc/nginx/sites-enabled/localhost
 ```
 
@@ -104,14 +103,15 @@ Restart the nginx's service
 
 ```bash
 service nginx restart
-``
+```
 
 ## Configuring Wordpress
 
 Connect to your-ip:8000 and follow the instruction to install Wordpress. We previously have linked wp-mysql container with wordpress container, the alias for it is `mysql`. So, database's url is simply `mysql`.
 
-`wp-config.php`
-```
+Edit the file `wp-config.php` to configure reverse proxy in Wordpress.
+
+```php
 $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
 define('WP_HOME', 'http://blog.vibioh.fr');
 define('WP_SITEURL', 'http://blog.vibioh.fr');

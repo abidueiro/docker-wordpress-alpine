@@ -101,7 +101,7 @@ cp /etc/nginx/sites-available/default /etc/nginx/sites-available/localhost
 ln -s /etc/nginx/sites-available/localhost /etc/nginx/sites-enabled/localhost
 ```
 
-Edit the /etc/nginx/sites-enabled/localhost to this:
+Edit the `/etc/nginx/sites-enabled/localhost` to this:
 
 ```
 server {

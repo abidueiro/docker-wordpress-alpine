@@ -6,17 +6,19 @@ wpmysql:
     - MYSQL_USER=wordpress
     - MYSQL_PASSWORD=W0RDPR3SS!
   volumes:
-    - wpmysql-data:/var/lib/mysql
+    - /wordpress/mysql-data:/var/lib/mysql
 wordpress:
   image: vibioh/wordpress:latest
   ports:
-    - "80:80"
+    - "8000:80"
   volumes:
-    - wp-content:/var/www/vhosts/localhost/www/wp-content
+    - /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content
   links:
     - wpmysql:mysql
 nginx:
   image: vibioh/nginx:latest
+  volumes:
+    - /wordpress/nginx.conf:/etc/nginx/sites-enabled/wordpress
   ports:
     - "80:80"
   links:

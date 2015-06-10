@@ -129,8 +129,6 @@ wpmysql:
     - /wordpress/mysql-data:/var/lib/mysql
 wordpress:
   image: vibioh/wordpress:latest
-  ports:
-    - "8000:80"
   volumes:
     - /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content
   links:

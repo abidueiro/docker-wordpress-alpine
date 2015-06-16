@@ -9,10 +9,10 @@ wpmysql:
     - /wordpress/mysql-data:/var/lib/mysql
 wordpress:
   image: vibioh/wordpress:latest
-  ports:
-    - "8000:80"
+  environment:
+    - DOMAIN_NAME=docker
   volumes:
-    - /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content
+    - /wordpress/wp-content:/var/www/vhosts/docker/www/wp-content
   links:
     - wpmysql:mysql
 nginx:

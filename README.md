@@ -5,6 +5,10 @@
     vibioh/nginx        17.08 MB
     vibioh/mysql        130.2 MB
 
+## Forewords
+
+All images used in this guide are based on the latest alpine image. A very light (the lightest ?) Linux distributions, shipped with nothing, perfect for making one role image.
+
 ## Mysql Docker
 
 In order to run Wordpress, the first thing we need is a database. Wordpress works pretty well with MySql, so we will start a container for it.
@@ -13,6 +17,8 @@ In order to run Wordpress, the first thing we need is a database. Wordpress work
 
 The entrypoint of MySql's image allows us to create a database and user with credentials to connect (largely inspired by [MySQL official image](https://github.com/docker-library/mysql) and [Hypriot MySQL image](https://github.com/hypriot/rpi-mysql))
 
+The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile).
+
 ```bash
 docker run -d --name wpmysql -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS! -v /wordpress/mysql-data:/var/lib/mysql vibioh/mysql:latest
 ```
@@ -20,7 +26,7 @@ docker run -d --name wpmysql -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wo
 Some explanations are welcome:
 
 * `-d` option start the container as a *daemon*
-* `--name wpmysql` option gives a name to the container. It's specially important in our case. Next, we will link containers and they must be referenced by name
+* `--name wpmysql` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
 * `-e MYSQL_ROOT_PASSWORD=s3cr3t!` option defines the root's password of MySql (MariaDB) used to initialize database structure
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
 * `-e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS!` option defines the username with its credentials that will have access to database created
@@ -38,7 +44,7 @@ We will externalize the `wp-content` directory in order to not ship it inside th
 > You can skip this step if you don't care, in next steps, don't add the volume to the Wordpress container.
 
 ```bash
-wget http://fr.wordpress.org/wordpress-4.2.2-fr_FR.tar.gz -O - | tar xz -C /wordpress/
+wget http://fr.wordpress.org/wordpress-latest-fr_FR.tar.gz -O - | tar xz -C /wordpress/
 mv /wordpress/wordpress/wp-content /wordpress/wp-content
 rm -rf /wordpress/wordpress
 chown -R nobody:nogroup /wordpress/
@@ -47,7 +53,7 @@ chown -R nobody:nogroup /wordpress/
 ### Starting the container for Wordpress
 
 ```bash
-docker run -d --name wordpress -v /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content --link wpmysql:mysql vibioh/wordpress:latest
+docker run -d --name wordpress --link wpmysql:mysql -v /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content vibioh/wordpress:latest
 ```
 
 Some explanations are welcome:
@@ -71,6 +77,8 @@ server {
 
   location / {
     proxy_pass http://wordpress;
+    proxy_set_header Host            blog.vibioh.fr;
+    proxy_set_header X-Forwarded-For $remote_addr;
   }
 }
 ```
@@ -78,7 +86,7 @@ server {
 ### Starting the container for Nginx
 
 ```bash
-docker run -d -p 80:80 --name nginx -v /wordpress/nginx.conf:/etc/nginx/sites-enabled/wordpress --link wordpress:wordpress vibioh/nginx:latest
+docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /wordpress/nginx.conf:/etc/nginx/sites-enabled/wordpress vibioh/nginx:latest
 ```
 
 Some explanations are welcome:
@@ -90,8 +98,6 @@ Some explanations are welcome:
 Connect to [Wordpress](http://blog.vibioh.fr/) and follow instructions to install Wordpress.
 
 ![](./wp_configure.png)
-
-If page seems ugly, this is mainly because `css` are not loaded: we are behind a reverse proxy and Wordpress doesn't know that. At the end of process, when Wordpress asks you to login, configure reverse proxy.
 
 ### Define domain's name in Wordpress
 

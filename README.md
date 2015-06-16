@@ -7,7 +7,7 @@
 
 ## Forewords
 
-All images used in this guide are based on the latest alpine image. A very light (the lightest ?) Linux distributions, shipped with nothing, perfect for making one role image.
+All images used in this guide are based on the latest [alpine image](https://registry.hub.docker.com/_/alpine/). A very light (the lightest ?) Linux distributions, shipped with nothing, perfect for making one role image.
 
 ## Mysql Docker
 
@@ -44,22 +44,25 @@ We will externalize the `wp-content` directory in order to not ship it inside th
 > You can skip this step if you don't care, in next steps, don't add the volume to the Wordpress container.
 
 ```bash
-wget http://fr.wordpress.org/wordpress-latest-fr_FR.tar.gz -O - | tar xz -C /wordpress/
-mv /wordpress/wordpress/wp-content /wordpress/wp-content
-rm -rf /wordpress/wordpress
-chown -R nobody:nogroup /wordpress/
+wget fr.wordpress.org/wordpress-latest-fr_FR.zip
+unzip wordpress-latest-fr_FR.zip
+rm -rf wordpress-latest-fr_FR.zip
+mv ./wordpress/wp-content /wordpress/wp-content
+rm -rf ./wordpress
+chown -R nobody:nogroup /wordpress/wp-content
 ```
 
 ### Starting the container for Wordpress
 
 ```bash
-docker run -d --name wordpress --link wpmysql:mysql -v /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content vibioh/wordpress:latest
+docker run -d --name wordpress --link wpmysql:mysql -e DOMAIN_NAME=blog.vibioh.fr -v /wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
 ```
 
 Some explanations are welcome:
 
-* `-v [...]` option defines where the Wordpress content is on the host, like we previously made it for MySql.
 * `--link wpmysql:mysql` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `wpmysql` to our new container with the name `mysql`. What Docker do is to modify the `/etc/hosts` to match container's ip to the given alias.
+* `-e DOMAIN_NAME=blog.vibioh.fr` option define an environment variable for nginx for configuring virtual host (meaningful when container is exposed directly)
+* `-v [...]` option defines where the Wordpress content is on the host, like we previously made it for MySql.
 * Again, we don't use the `-p` option for allowing external connections to the container with defaut port. We'll use a frontal server.
 
 ## Nginx Docker
@@ -68,7 +71,7 @@ You can map the Wordpress container directly to the host's port 80 but the inter
 
 ### Configure the nging proxy
 
-Create the file /wordpress/nginx.conf
+Create the file `/wordpress/blog.vibioh.fr.conf`
 
 ```
 server {
@@ -86,7 +89,7 @@ server {
 ### Starting the container for Nginx
 
 ```bash
-docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /wordpress/nginx.conf:/etc/nginx/sites-enabled/wordpress vibioh/nginx:latest
+docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr vibioh/nginx:latest
 ```
 
 Some explanations are welcome:
@@ -98,22 +101,6 @@ Some explanations are welcome:
 Connect to [Wordpress](http://blog.vibioh.fr/) and follow instructions to install Wordpress.
 
 ![](./wp_configure.png)
-
-### Define domain's name in Wordpress
-
-Connect to Wordpress container to edit files.
-
-```bash
-docker exec -it wordpress vi /var/www/vhosts/localhost/www/wp-config.php
-```
-
-Edit the file `wp-config.php` to configure domain's name in Wordpress (add these lines at the beggining of file).
-
-```php
-$_SERVER['HTTP_HOST'] = 'blog.vibioh.fr';
-define('WP_HOME', 'http://'.$_SERVER['HTTP_HOST'].'/');
-define('WP_SITEURL', 'http://'.$_SERVER['HTTP_HOST'].'/');
-```
 
 **Congratulations**, you can now browse to [Wordpress admin](http://blog.vibioh.fr/wp-admin/) to start configuring your blog :)
 
@@ -135,6 +122,8 @@ wpmysql:
     - /wordpress/mysql-data:/var/lib/mysql
 wordpress:
   image: vibioh/wordpress:latest
+  environment:
+    - DOMAIN_NAME=blog.vibioh.fr
   volumes:
     - /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content
   links:
@@ -142,7 +131,7 @@ wordpress:
 nginx:
   image: vibioh/nginx:latest
   volumes:
-    - /wordpress/nginx.conf:/etc/nginx/sites-enabled/wordpress
+    - /wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr
   ports:
     - "80:80"
   links:

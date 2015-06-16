@@ -10,15 +10,15 @@ wpmysql:
 wordpress:
   image: vibioh/wordpress:latest
   environment:
-    - DOMAIN_NAME=docker
+    - DOMAIN_NAME=blog.vibioh.fr
   volumes:
-    - /wordpress/wp-content:/var/www/vhosts/docker/www/wp-content
+    - /wordpress/wp-content:/var/www/wordpress/wp-content
   links:
     - wpmysql:mysql
 nginx:
   image: vibioh/nginx:latest
   volumes:
-    - /wordpress/nginx.conf:/etc/nginx/sites-enabled/wordpress
+    - /wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr
   ports:
     - "80:80"
   links:

@@ -1,8 +1,8 @@
-# Wordpress on less than 200MB Docker's image
+# Wordpress on less than 185MB Docker's image
 
     REPOSITORY          VIRTUAL SIZE
     vibioh/wordpress    47.06 MB
-    vibioh/nginx        17.09 MB
+    vibioh/nginx        6.733 MB
     vibioh/mysql        130.2 MB
 
 ## Forewords

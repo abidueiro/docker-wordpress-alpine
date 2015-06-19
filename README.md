@@ -1,13 +1,13 @@
 # Wordpress on less than 200MB Docker's image
 
     REPOSITORY          VIRTUAL SIZE
-    vibioh/wordpress    47.04 MB
-    vibioh/nginx        17.08 MB
+    vibioh/wordpress    47.06 MB
+    vibioh/nginx        17.09 MB
     vibioh/mysql        130.2 MB
 
 ## Forewords
 
-All images used in this guide are based on the latest [alpine image](https://registry.hub.docker.com/_/alpine/). A very light (the lightest ?) Linux distributions, shipped with nothing, perfect for making one role image.
+All images used in this guide are based on the latest [Alpine image](https://registry.hub.docker.com/_/alpine/). A very light Linux distributions, shipped with nothing, perfect for making one role image.
 
 ## Mysql Docker
 
@@ -31,7 +31,7 @@ Some explanations are welcome:
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
 * `-e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS!` option defines the username with its credentials that will have access to database created
 * `-v /wordpress/mysql-data:/var/lib/mysql` option is an important part too. Here we define the place in the host machine where MySql will store its data so that the container can die, your datas are safe.
-* We don't use the `-p` to expose port 3306 for allowing external connection by port. The image doesn't contain mysql-client, we don't have the use when all datas are managed by Wordpress.
+* We don't use the `-p` to expose port 3306 to external connections (outside of host machine). Only Docker will need access to the container.
 
 ## Wordpress Docker
 
@@ -39,9 +39,9 @@ The second thing Wordpress needs is a HTTP server, with PHP enabled and zlib to 
 
 ### Prerequisite
 
-We will externalize the `wp-content` directory in order to not ship it inside the container. So, first thing to do is to retrieve the standard structure of this directory locally.
+We will externalize the `wp-content` directory in order to not modify it inside the container. This directory contains all datas that make your Wordpress unique. So, first thing to do is to retrieve the standard structure of this directory locally.
 
-> You can skip this step if you don't care, in next steps, don't add the volume to the Wordpress container.
+> You can skip this step in test environment. When you delete the container, you lost all datas. In next steps, don't add the volume to the Wordpress container.
 
 ```bash
 wget fr.wordpress.org/wordpress-latest-fr_FR.zip
@@ -55,19 +55,18 @@ chown -R nobody:nogroup /wordpress/wp-content
 ### Starting the container for Wordpress
 
 ```bash
-docker run -d --name wordpress --link wpmysql:mysql -e DOMAIN_NAME=blog.vibioh.fr -v /wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
+docker run -d --name wordpress --link wpmysql:mysql -v /wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
 ```
 
 Some explanations are welcome:
 
-* `--link wpmysql:mysql` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `wpmysql` to our new container with the name `mysql`. What Docker do is to modify the `/etc/hosts` to match container's ip to the given alias.
-* `-e DOMAIN_NAME=blog.vibioh.fr` option define an environment variable for nginx for configuring virtual host (meaningful when container is exposed directly)
+* `--link wpmysql:mysql` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `wpmysql` to our new container with the name `mysql`. What Docker does is to modify the `/etc/hosts` to match container's ip to the given alias.
 * `-v [...]` option defines where the Wordpress content is on the host, like we previously made it for MySql.
-* Again, we don't use the `-p` option for allowing external connections to the container with defaut port. We'll use a frontal server.
+* Again, we don't use the `-p` option for allowing external connections to the container with default port. We'll use a frontal server in Docker.
 
 ## Nginx Docker
 
-You can map the Wordpress container directly to the host's port 80 but the interesting thing with Docker is the abilities to run many containers in one physical (or virtual !) machine. So, we choose to put a frontal nginx that will dispatch request based on domain's name. In clear, act as a reverse proxy.
+You can map the Wordpress container directly to the host's port 80 but the interesting thing with Docker is the ability to run many containers in one physical (or virtual !) machine. So, we put a frontal nginx that will dispatch request based on domain's name. In clear, act as a reverse proxy. And guess what, this nginx will be a container too.
 
 ### Configure the nging proxy
 
@@ -86,6 +85,10 @@ server {
 }
 ```
 
+Some explanations are welcome:
+
+* `proxy_pass http://wordpress` option indicate to nginx to route traffic based on domain name `blog.vibioh.fr` to `wordpress`. This route will be searched in the `/etc/hosts` first, and this file will be changed by Docker when we'll link the nginx's container to the wordpress one.
+
 ### Starting the container for Nginx
 
 ```bash
@@ -95,6 +98,7 @@ docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /wordpress/blo
 Some explanations are welcome:
 
 * `-p 80:80` option defines that container's port **80** (second one) will be accessible via the host's public port **80** (first one). This is important for a web server to be accessible to the entire world.
+* `--link wordpress:wordpress` again we link two containers to allow them to communicate simply.
 
 ## Configuring Wordpress
 
@@ -122,8 +126,6 @@ wpmysql:
     - /wordpress/mysql-data:/var/lib/mysql
 wordpress:
   image: vibioh/wordpress:latest
-  environment:
-    - DOMAIN_NAME=blog.vibioh.fr
   volumes:
     - /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content
   links:

@@ -9,8 +9,6 @@ wpmysql:
     - /wordpress/mysql-data:/var/lib/mysql
 wordpress:
   image: vibioh/wordpress:latest
-  environment:
-    - DOMAIN_NAME=blog.vibioh.fr
   volumes:
     - /wordpress/wp-content:/var/www/wordpress/wp-content
   links:

@@ -1,9 +1,6 @@
-# Wordpress on less than 185MB Docker's image
+# Wordpress on less than 50MB Docker's image
 
-    REPOSITORY          VIRTUAL SIZE
-    vibioh/wordpress    47.06 MB
-    vibioh/nginx        6.733 MB
-    vibioh/mysql        130.2 MB
+[![](https://badge.imagelayers.io/vibioh/wordpress:latest.svg)](https://imagelayers.io/?images=vibioh/wordpress:latest 'Get your own badge on imagelayers.io')
 
 ## Forewords
 

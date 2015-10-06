@@ -5,7 +5,7 @@ COPY ./wordpress-entrypoint.sh /
 
 ENV WORDPRESS_VERSION latest
 
-RUN apk --update add php-fpm php-mysql php-zlib openssl \
+RUN apk --update add php-fpm php-mysql php-zlib php-curl openssl \
  && wget fr.wordpress.org/wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
  && unzip wordpress-${WORDPRESS_VERSION}-fr_FR.zip -d /var/www/ \
  && rm -rf wordpress-${WORDPRESS_VERSION}-fr_FR.zip \

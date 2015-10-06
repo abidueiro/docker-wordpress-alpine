@@ -18,6 +18,6 @@ nginx:
   volumes:
     - /wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr
   ports:
-    - "80:80"
+    - "7000:80"
   links:
     - wordpress

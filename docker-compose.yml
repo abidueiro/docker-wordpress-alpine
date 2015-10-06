@@ -13,3 +13,5 @@ wordpress:
     - /wordpress/wp-content:/var/www/wordpress/wp-content
   links:
     - wpmysql:mysql
+  ports:
+    - "7000:80"

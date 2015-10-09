@@ -1,0 +1,15 @@
+wpmysql:
+  image: vibioh/mysql:latest
+  user: mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=s3cr3t!
+    - MYSQL_DATABASE=wordpress
+    - MYSQL_USER=wordpress
+    - MYSQL_PASSWORD=W0RDPR3SS!
+wordpress:
+  image: vibioh/wordpress:latest
+  user: nginx
+  links:
+    - wpmysql:mysql
+  ports:
+    - "7000:1080"

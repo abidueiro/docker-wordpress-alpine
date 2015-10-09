@@ -10,7 +10,8 @@ RUN apk --update add php-fpm php-mysql php-zlib php-curl openssl \
  && unzip wordpress-${WORDPRESS_VERSION}-fr_FR.zip -d /var/www/ \
  && rm -rf wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
  && sed -i "s/\/var\/www\/localhost/\/var\/www\/wordpress/" /etc/nginx/sites-enabled/localhost \
- && chown -R nobody:nogroup /var/www/wordpress \
+ && chown -R nginx:nogroup /var/www/wordpress \
+ && chown -R nginx:nogroup /var/log/ \
  && chmod +x /wordpress-entrypoint.sh \
  && apk del openssl \
  && rm -rf /var/cache/apk/*

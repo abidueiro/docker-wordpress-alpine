@@ -1,0 +1,13 @@
+mysql-base:
+  image: vibioh/mysql:latest
+  user: mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=s3cr3t!
+    - MYSQL_DATABASE=wordpress
+    - MYSQL_USER=wordpress
+    - MYSQL_PASSWORD=W0RDPR3SS!
+wordpress-base:
+  image: vibioh/wordpress:latest
+  user: nginx
+nginx-base:
+  image: vibioh/nginx:latest

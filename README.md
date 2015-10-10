@@ -1,6 +1,8 @@
-# Wordpress on less than 50MB Docker's image
+# Wordpress on a 50MB Docker's image
 
 [![](https://badge.imagelayers.io/vibioh/wordpress:latest.svg)](https://imagelayers.io/?images=vibioh/wordpress:latest 'Get your own badge on imagelayers.io')
+
+[TOC]
 
 ## Forewords
 
@@ -17,17 +19,18 @@ The entrypoint of MySql's image allows us to create a database and user with cre
 The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile).
 
 ```bash
-docker run -d --name wpmysql -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS! -v /wordpress/mysql-data:/var/lib/mysql vibioh/mysql:latest
+docker run -d --name mysql --user mysql -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS! -v /var/wordpress/mysql:/var/lib/mysql vibioh/mysql:latest
 ```
 
 Some explanations are welcome:
 
 * `-d` option start the container as a *daemon*
-* `--name wpmysql` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
+* `--name mysql` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
+* `--user mysql` option start the mysqld with a non-root user, *mysql*
 * `-e MYSQL_ROOT_PASSWORD=s3cr3t!` option defines the root's password of MySql (MariaDB) used to initialize database structure
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
 * `-e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS!` option defines the username with its credentials that will have access to database created
-* `-v /wordpress/mysql-data:/var/lib/mysql` option is an important part too. Here we define the place in the host machine where MySql will store its data so that the container can die, your datas are safe.
+* `-v /var/wordpress/mysql:/var/lib/mysql` option is an important part too. Here we define the place in the host machine where MySql will store its data so that the container can die, your datas are safe.
 * We don't use the `-p` to expose port 3306 to external connections (outside of host machine). Only Docker will need access to the container.
 
 ## Wordpress Docker
@@ -44,20 +47,20 @@ We will externalize the `wp-content` directory in order to not modify it inside 
 wget fr.wordpress.org/wordpress-latest-fr_FR.zip
 unzip wordpress-latest-fr_FR.zip
 rm -rf wordpress-latest-fr_FR.zip
-mv ./wordpress/wp-content /wordpress/wp-content
+mv ./wordpress/wp-content /var/wordpress/wp-content
 rm -rf ./wordpress
-chown -R nobody:nogroup /wordpress/wp-content
+chown -R nobody:nogroup /var/wordpress/wp-content
 ```
 
 ### Starting the container for Wordpress
 
 ```bash
-docker run -d --name wordpress --link wpmysql:mysql -v /wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
+docker run -d --name wordpress --user nginx --link mysql:mysql -v /var/wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
 ```
 
 Some explanations are welcome:
 
-* `--link wpmysql:mysql` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `wpmysql` to our new container with the name `mysql`. What Docker does is to modify the `/etc/hosts` to match container's ip to the given alias.
+* `--link mysql:mysql` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `mysql` (first one) to our new container with the name `mysql`. What Docker does is to modify the `/etc/hosts` to match container's ip to the given alias.
 * `-v [...]` option defines where the Wordpress content is on the host, like we previously made it for MySql.
 * Again, we don't use the `-p` option for allowing external connections to the container with default port. We'll use a frontal server in Docker.
 
@@ -67,7 +70,7 @@ You can map the Wordpress container directly to the host's port 80 but the inter
 
 ### Configure the nging proxy
 
-Create the file `/wordpress/blog.vibioh.fr.conf`
+Create the file `/var/wordpress/blog.vibioh.fr.conf`
 
 ```
 server {
@@ -89,13 +92,14 @@ Some explanations are welcome:
 ### Starting the container for Nginx
 
 ```bash
-docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr vibioh/nginx:latest
+docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /var/wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr vibioh/nginx:latest
 ```
 
 Some explanations are welcome:
 
 * `-p 80:80` option defines that container's port **80** (second one) will be accessible via the host's public port **80** (first one). This is important for a web server to be accessible to the entire world.
 * `--link wordpress:wordpress` again we link two containers to allow them to communicate simply.
+* We don't run nginx container with `--user nginx` because opening port below 1024 require root access.
 
 ## Configuring Wordpress
 
@@ -108,34 +112,6 @@ Connect to [Wordpress](http://blog.vibioh.fr/) and follow instructions to instal
 ## With docker-compose ?
 
 Starting and linking containers can be tedious and generate a lot of command line. Docker offers the possibility to start multiple related containers with **docker-compose**.
-
-Create a `docker-compose.yml` file and put it all our configuration.
-
-```yml
-wpmysql:
-  image: vibioh/mysql:latest
-  environment:
-    - MYSQL_ROOT_PASSWORD=s3cr3t!
-    - MYSQL_DATABASE=wordpress
-    - MYSQL_USER=wordpress
-    - MYSQL_PASSWORD=W0RDPR3SS!
-  volumes:
-    - /wordpress/mysql-data:/var/lib/mysql
-wordpress:
-  image: vibioh/wordpress:latest
-  volumes:
-    - /wordpress/wp-content:/var/www/vhosts/localhost/www/wp-content
-  links:
-    - wpmysql:mysql
-nginx:
-  image: vibioh/nginx:latest
-  volumes:
-    - /wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr
-  ports:
-    - "80:80"
-  links:
-    - wordpress
-```
 
 ## On an `armhf` infrastructure
 

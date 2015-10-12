@@ -19,7 +19,7 @@ The entrypoint of MySql's image allows us to create a database and user with cre
 The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile).
 
 ```bash
-docker run -d --name mysql --user mysql -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS! -v /var/wordpress/mysql:/var/lib/mysql vibioh/mysql:latest
+docker run -d --name mysql --user mysql --read-only -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS! -v /var/wordpress/mysql:/var/lib/mysql vibioh/mysql:latest
 ```
 
 Some explanations are welcome:
@@ -27,6 +27,7 @@ Some explanations are welcome:
 * `-d` option start the container as a *daemon*
 * `--name mysql` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
 * `--user mysql` option start the mysqld with a non-root user, *mysql*
+* `--read-only` option define a read-only filesystem (security reason)
 * `-e MYSQL_ROOT_PASSWORD=s3cr3t!` option defines the root's password of MySql (MariaDB) used to initialize database structure
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
 * `-e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS!` option defines the username with its credentials that will have access to database created
@@ -55,7 +56,7 @@ chown -R nobody:nogroup /var/wordpress/wp-content
 ### Starting the container for Wordpress
 
 ```bash
-docker run -d --name wordpress --user nginx --link mysql:mysql -v /var/wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
+docker run -d --name wordpress --user nginx --read-only --link mysql:mysql -v /var/wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
 ```
 
 Some explanations are welcome:
@@ -92,7 +93,7 @@ Some explanations are welcome:
 ### Starting the container for Nginx
 
 ```bash
-docker run -d -p 80:80 --name nginx --link wordpress:wordpress -v /var/wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr vibioh/nginx:latest
+docker run -d -p 80:80 --name nginx --read-only --link wordpress:wordpress -v /var/wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr vibioh/nginx:latest
 ```
 
 Some explanations are welcome:

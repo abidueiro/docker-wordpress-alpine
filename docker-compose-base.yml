@@ -10,5 +10,7 @@ mysql-base:
 wordpress-base:
   image: vibioh/wordpress:latest
   user: nginx
+  read_only: true
 nginx-base:
   image: vibioh/nginx:latest
+  read_only: true

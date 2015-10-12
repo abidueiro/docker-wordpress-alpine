@@ -19,5 +19,6 @@ RUN apk --update add php-fpm php-mysql php-zlib php-curl openssl \
 COPY ./wordpress.conf /var/www/wordpress/wordpress.conf
 
 VOLUME /var/www/wordpress
+VOLUME /var/log
 
 ENTRYPOINT [ "/wordpress-entrypoint.sh" ]

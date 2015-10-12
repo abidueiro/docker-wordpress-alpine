@@ -1,6 +1,7 @@
 mysql-base:
   image: vibioh/mysql:latest
   user: mysql
+  read_only: true
   environment:
     - MYSQL_ROOT_PASSWORD=s3cr3t!
     - MYSQL_DATABASE=wordpress

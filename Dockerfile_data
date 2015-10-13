@@ -2,14 +2,16 @@ FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 RUN addgroup mysql mysql \
- && adduser -S nginx \
- && addgroup nginx www-data \
  && mkdir -p /var/lib/mysql \
  && chown -R mysql:mysql /var/lib/mysql \
- && mkdir -p /var/www/wordpress/wp-content \
- && chown -R nginx:nogroup /var/www/wordpress/wp-content
+ && adduser -S nginx \
+ && wget fr.wordpress.org/wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
+ && unzip wordpress-${WORDPRESS_VERSION}-fr_FR.zip -d /var/www/ \
+ && rm -rf wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
+ && mv /var/www/wordpress /var/www/localhost \
+ && chown -R nginx:nogroup /var/www/localhost \
 
 VOLUME /var/lib/mysql
-VOLUME /var/www/wordpress/wp-content
+VOLUME /var/www/localhost
 
 CMD ["echo", "Data container for Wordpress"]

@@ -4,8 +4,8 @@ MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 COPY ./wordpress-entrypoint.sh /
 
 ENV WORDPRESS_VERSION latest
-USER root
 
+USER root
 RUN apk --update add php-fpm php-mysql php-zlib php-curl openssl \
  && wget fr.wordpress.org/wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
  && unzip wordpress-${WORDPRESS_VERSION}-fr_FR.zip -d /var/www/ \
@@ -19,7 +19,9 @@ RUN apk --update add php-fpm php-mysql php-zlib php-curl openssl \
 
 COPY ./wordpress.conf /var/www/wordpress/wordpress.conf
 
-VOLUME /var/www/wordpress
+VOLUME /var/www/wordpress/wp-content
 VOLUME /var/log
+
+USER nginx 
 
 ENTRYPOINT [ "/wordpress-entrypoint.sh" ]

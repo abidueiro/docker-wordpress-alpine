@@ -1,0 +1,15 @@
+FROM alpine:latest
+MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
+
+RUN addgroup mysql mysql \
+ && adduser -S nginx \
+ && addgroup nginx www-data \
+ && mkdir -p /var/lib/mysql \
+ && chown -R mysql:mysql /var/lib/mysql \
+ && mkdir -p /var/www/wordpress/wp-content \
+ && chown -R nginx:nogroup /var/www/wordpress/wp-content
+
+VOLUME /var/lib/mysql
+VOLUME /var/www/wordpress/wp-content
+
+CMD ["echo", "Data container for Wordpress"]

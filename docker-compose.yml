@@ -1,8 +1,5 @@
 data:
-  image: alpine:latest
-  volumes:
-    - /var/lib/mysql
-    - /var/wordpress/wp-content
+  image: vibioh/wordpress-data:latest
 mysql:
   image: vibioh/mysql:latest
   read_only: true

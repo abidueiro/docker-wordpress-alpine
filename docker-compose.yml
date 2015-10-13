@@ -1,20 +1,30 @@
+data:
+  image: alpine:latest
+  volumes:
+    - /var/lib/mysql
+    - /var/wordpress/wp-content
 mysql:
-  extends:
-    file: docker-compose-no-data.yml
-    service: mysql-volume
+  image: vibioh/mysql:latest
+  read_only: true
+  environment:
+    - MYSQL_ROOT_PASSWORD=s3cr3t!
+    - MYSQL_DATABASE=wordpress
+    - MYSQL_USER=wordpress
+    - MYSQL_PASSWORD=W0RDPR3SS!
+  volumes_from:
+    - data
 wordpress:
-  extends:
-    file: docker-compose-no-data.yml
-    service: wordpress-volume
+  image: vibioh/wordpress:latest
+  read_only: true
+  volumes_from:
+    - data
   links:
     - mysql
   ports:
     - "7000:1080"
-# nginx:
-#   extends:
-#     file: docker-compose-base.yml
-#     service: nginx-base
-#   links:
-#     - wordpress
-#   ports:
-#     - "7000:80"
+#nginx:
+#  image: vibioh/nginx:latest
+#  links:
+#    - wordpress
+#  ports:
+#    - "7000:80"

@@ -1,8 +1,0 @@
-mysql-volume:
-  extends:
-    file: docker-compose-base.yml
-    service: mysql-base
-wordpress-volume:
-  extends:
-    file: docker-compose-base.yml
-    service: wordpress-base

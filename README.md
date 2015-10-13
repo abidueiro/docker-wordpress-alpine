@@ -18,15 +18,21 @@ The entrypoint of MySql's image allows us to create a database and user with cre
 
 The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile).
 
-```bash
-docker run -d --name mysql --user mysql --read-only -e MYSQL_ROOT_PASSWORD=s3cr3t! -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS! -v /var/wordpress/mysql:/var/lib/mysql vibioh/mysql:latest
-```
+    docker run \
+      -d \
+      --name mysql \
+      --read-only \
+      -e MYSQL_ROOT_PASSWORD=s3cr3t! \
+      -e MYSQL_DATABASE=wordpress \
+      -e MYSQL_USER=wordpress \
+      -e MYSQL_PASSWORD=W0RDPR3SS! \
+      -v /var/wordpress/mysql:/var/lib/mysql \
+      vibioh/mysql:latest
 
 Some explanations are welcome:
 
 * `-d` option start the container as a *daemon*
 * `--name mysql` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
-* `--user mysql` option start the mysqld with a non-root user, *mysql*
 * `--read-only` option define a read-only filesystem (security reason)
 * `-e MYSQL_ROOT_PASSWORD=s3cr3t!` option defines the root's password of MySql (MariaDB) used to initialize database structure
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
@@ -44,20 +50,22 @@ We will externalize the `wp-content` directory in order to not modify it inside 
 
 > You can skip this step in test environment. When you delete the container, you lost all datas. In next steps, don't add the volume to the Wordpress container.
 
-```bash
-wget fr.wordpress.org/wordpress-latest-fr_FR.zip
-unzip wordpress-latest-fr_FR.zip
-rm -rf wordpress-latest-fr_FR.zip
-mv ./wordpress/wp-content /var/wordpress/wp-content
-rm -rf ./wordpress
-chown -R nobody:nogroup /var/wordpress/wp-content
-```
+    wget fr.wordpress.org/wordpress-latest-fr_FR.zip
+    unzip wordpress-latest-fr_FR.zip
+    rm -rf wordpress-latest-fr_FR.zip
+    mv ./wordpress/wp-content /var/wordpress/wp-content
+    rm -rf ./wordpress
+    chown -R nobody:nogroup /var/wordpress/wp-content
 
 ### Starting the container for Wordpress
 
-```bash
-docker run -d --name wordpress --user nginx --read-only --link mysql:mysql -v /var/wordpress/wp-content:/var/www/wordpress/wp-content vibioh/wordpress:latest
-```
+    docker run \
+      -d \
+      --name wordpress \
+      --read-only \
+      --link mysql:mysql \
+      -v /var/wordpress/wp-content:/var/www/wordpress/wp-content \
+      vibioh/wordpress:latest
 
 Some explanations are welcome:
 
@@ -73,18 +81,16 @@ You can map the Wordpress container directly to the host's port 80 but the inter
 
 Create the file `/var/wordpress/blog.vibioh.fr.conf`
 
-```
-server {
-  listen 80;
-  server_name blog.vibioh.fr;
-
-  location / {
-    proxy_pass http://wordpress;
-    proxy_set_header Host            blog.vibioh.fr;
-    proxy_set_header X-Forwarded-For $remote_addr;
-  }
-}
-```
+    server {
+      listen 80;
+      server_name blog.vibioh.fr;
+    
+      location / {
+        proxy_pass http://wordpress;
+        proxy_set_header Host            blog.vibioh.fr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+      }
+    }
 
 Some explanations are welcome:
 
@@ -92,9 +98,15 @@ Some explanations are welcome:
 
 ### Starting the container for Nginx
 
-```bash
-docker run -d -p 80:80 --name nginx --read-only --link wordpress:wordpress -v /var/wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr vibioh/nginx:latest
-```
+    docker run \
+      -d \
+      -p 80:80 \
+      --name nginx \
+      --user root \
+      --read-only \
+      --link wordpress:wordpress \
+      -v /var/wordpress/blog.vibioh.fr.conf:/etc/nginx/sites-enabled/blog.vibioh.fr \
+      vibioh/nginx:latest
 
 Some explanations are welcome:
 
@@ -122,27 +134,21 @@ To do that, you have to build your own ARM images from the same Dockerfile used 
 
 ### Create a MySql image
 
-```bash
-git clone https://github.com/ViBiOh/docker-mysql.git
-cd docker-mysql
-sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
-docker build -t vibioh/mysql-arm --rm .
-```
+    git clone https://github.com/ViBiOh/docker-mysql.git
+    cd docker-mysql
+    sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
+    docker build -t vibioh/mysql-arm --rm .
 
 ### Create a nginx image
 
-```bash
-git clone https://github.com/ViBiOh/docker-nginx.git
-cd docker-nginx
-sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
-docker build -t vibioh/nginx-arm --rm .
-```
+    git clone https://github.com/ViBiOh/docker-nginx.git
+    cd docker-nginx
+    sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
+    docker build -t vibioh/nginx-arm --rm .
 
 ### Create a Wordpress image
 
-```bash
-git clone https://github.com/ViBiOh/docker-wordpress.git
-cd docker-wordpress
-sed -i "s/vibioh\/nginx/vibioh\/nginx-arm/" Dockerfile
-docker build -t vibioh/wordpress-arm --rm .
-```
+    git clone https://github.com/ViBiOh/docker-wordpress.git
+    cd docker-wordpress
+    sed -i "s/vibioh\/nginx/vibioh\/nginx-arm/" Dockerfile
+    docker build -t vibioh/wordpress-arm --rm .

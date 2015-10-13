@@ -1,6 +1,5 @@
 mysql-base:
   image: vibioh/mysql:latest
-  user: mysql
   read_only: true
   environment:
     - MYSQL_ROOT_PASSWORD=s3cr3t!
@@ -9,8 +8,6 @@ mysql-base:
     - MYSQL_PASSWORD=W0RDPR3SS!
 wordpress-base:
   image: vibioh/wordpress:latest
-  user: nginx
   read_only: true
 nginx-base:
   image: vibioh/nginx:latest
-  read_only: true

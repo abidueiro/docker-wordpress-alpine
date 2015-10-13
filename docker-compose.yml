@@ -1,5 +1,6 @@
-data:
-  image: vibioh/wordpress-data:latest
+wordpress:
+  image: vibioh/wordpress:latest
+  read_only: true
 mysql:
   image: vibioh/mysql:latest
   read_only: true
@@ -9,12 +10,12 @@ mysql:
     - MYSQL_USER=wordpress
     - MYSQL_PASSWORD=W0RDPR3SS!
   volumes_from:
-    - data
-wordpress:
-  image: vibioh/wordpress:latest
+    - wordpress
+nging:
+  image: vibioh/php:latest
   read_only: true
   volumes_from:
-    - data
+    - wordpress
   links:
     - mysql
   ports:

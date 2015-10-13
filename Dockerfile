@@ -4,6 +4,7 @@ MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 COPY ./wordpress-entrypoint.sh /
 
 ENV WORDPRESS_VERSION latest
+USER root
 
 RUN apk --update add php-fpm php-mysql php-zlib php-curl openssl \
  && wget fr.wordpress.org/wordpress-${WORDPRESS_VERSION}-fr_FR.zip \

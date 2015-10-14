@@ -44,28 +44,15 @@ Some explanations are welcome:
 
 The second thing Wordpress needs is a HTTP server, with PHP enabled and zlib to uncompress modules, themes, updates, etc.
 
-### Prerequisite
-
-We will externalize the `wp-content` directory in order to not modify it inside the container. This directory contains all datas that make your Wordpress unique. So, first thing to do is to retrieve the standard structure of this directory locally.
-
-> You can skip this step in test environment. When you delete the container, you lost all datas. In next steps, don't add the volume to the Wordpress container.
-
-    wget fr.wordpress.org/wordpress-latest-fr_FR.zip
-    unzip wordpress-latest-fr_FR.zip
-    rm -rf wordpress-latest-fr_FR.zip
-    mv ./wordpress/wp-content /var/wordpress/wp-content
-    rm -rf ./wordpress
-    chown -R nobody:nogroup /var/wordpress/wp-content
-
 ### Starting the container for Wordpress
 
     docker run \
       -d \
-      --name wordpress \
+      --name nginx \
       --read-only \
       --link mysql:mysql \
-      -v /var/wordpress/wp-content:/var/www/wordpress/wp-content \
-      vibioh/wordpress:latest
+      -v /var/wordpress/:/var/www/localhost \
+      vibioh/nginx:latest
 
 Some explanations are welcome:
 

@@ -1,6 +1,8 @@
 wordpress:
   image: vibioh/wordpress:latest
   read_only: true
+  labels:
+    - "keep=true"
 mysql:
   image: vibioh/mysql:latest
   read_only: true

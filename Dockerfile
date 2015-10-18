@@ -19,5 +19,6 @@ RUN apk --update add openssl \
 
 VOLUME /var/lib/mysql
 VOLUME /var/www/localhost
+VOLUME /tmp
 
 CMD ["echo", "Data container for Wordpress"]

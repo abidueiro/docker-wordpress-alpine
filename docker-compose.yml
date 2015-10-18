@@ -20,9 +20,3 @@ nginx:
     - mysql
   ports:
     - "7000:1080"
-#nginx:
-#  image: vibioh/nginx:latest
-#  links:
-#    - wordpress
-#  ports:
-#    - "7000:80"

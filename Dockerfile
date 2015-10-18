@@ -14,7 +14,7 @@ RUN apk --update add openssl \
  && rm -rf wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
  && mv /var/www/wordpress /var/www/localhost \
  && chown -R nginx:nogroup /var/www/localhost \
- && apk del openssl \ 
+ && apk del openssl \
  && rm -rf /var/cache/apk/*
 
 VOLUME /var/lib/mysql

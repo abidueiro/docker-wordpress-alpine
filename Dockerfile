@@ -2,6 +2,7 @@ FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 ENV WORDPRESS_VERSION=latest
+LABEL keep="true"
 
 RUN apk --update add openssl \
  && addgroup mysql mysql \

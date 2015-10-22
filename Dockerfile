@@ -8,9 +8,9 @@ RUN apk --update add openssl \
  && mkdir -p /var/lib/mysql \
  && chown -R mysql:mysql /var/lib/mysql \
  && adduser -S nginx \
- && wget fr.wordpress.org/wordpress-${WORDPRESS_VERSION}-fr_FR.zip \
- && mkdir -p /var/www/ \
  && export WORDPRESS_VERSION=latest \
+ && wget fr.wordpress.org/wordpress-$WORDPRESS_VERSION-fr_FR.zip \
+ && mkdir -p /var/www/ \
  && unzip wordpress-$WORDPRESS_VERSION-fr_FR.zip -d /var/www/ \
  && rm -rf wordpress-$WORDPRESS_VERSION-fr_FR.zip \
  && mv /var/www/wordpress /var/www/localhost \

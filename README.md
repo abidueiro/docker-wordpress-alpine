@@ -110,7 +110,7 @@ To do that, you have to build your own ARM images from the same Dockerfile used 
 
 ### Create a php image
 
-    git clone https://github.com/ViBiOh/docker-nginx.git
+    git clone https://github.com/ViBiOh/docker-php.git
     cd docker-nginx
     sed -i "s/vibioh\/nginx/vibioh\/nginx-arm/" Dockerfile
     docker build -t vibioh/php-arm --rm .

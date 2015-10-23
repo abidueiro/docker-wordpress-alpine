@@ -3,12 +3,12 @@ MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 LABEL keep="true"
 
-RUN apk --update add openssl \
+RUN export WORDPRESS_VERSION=latest \
+ && apk --update add openssl \
  && addgroup mysql mysql \
  && mkdir -p /var/lib/mysql \
  && chown -R mysql:mysql /var/lib/mysql \
  && adduser -S nginx \
- && export WORDPRESS_VERSION=latest \
  && wget fr.wordpress.org/wordpress-$WORDPRESS_VERSION-fr_FR.zip \
  && mkdir -p /var/www/ \
  && unzip wordpress-$WORDPRESS_VERSION-fr_FR.zip -d /var/www/ \

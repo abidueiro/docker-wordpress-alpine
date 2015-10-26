@@ -23,4 +23,4 @@ nginx:
   links:
     - mysql
   ports:
-    - "7050:1080"
+    - "7000:1080"

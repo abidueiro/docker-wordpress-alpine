@@ -3,8 +3,6 @@ wordpress:
   read_only: true
   labels:
    - "keep=true"
-  volumes:
-   - /home/vibioh/zenika/wp-content:/var/www/localhost/wp-content
 mysql:
   image: vibioh/mysql:latest
   read_only: true

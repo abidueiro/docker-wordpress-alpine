@@ -13,7 +13,7 @@ mysql:
     - MYSQL_PASSWORD=W0RDPR3SS!
   volumes_from:
     - wordpress
-nginx:
+php:
   image: vibioh/php:latest
   read_only: true
   volumes_from:

@@ -13,6 +13,8 @@ mysql:
     - MYSQL_PASSWORD=W0RDPR3SS!
   volumes_from:
     - wordpress
+  cpu_shares: 512
+  mem_limit: 268435456
 php:
   image: vibioh/php:latest
   read_only: true
@@ -22,3 +24,5 @@ php:
     - mysql
   ports:
     - "7000:1080"
+  cpu_shares: 512
+  mem_limit: 268435456

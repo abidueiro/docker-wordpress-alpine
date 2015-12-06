@@ -1,8 +1,6 @@
 FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
-LABEL keep="true"
-
 RUN export WORDPRESS_VERSION=latest \
  && apk --update add openssl \
  && addgroup mysql mysql \
@@ -20,4 +18,4 @@ RUN export WORDPRESS_VERSION=latest \
 
 VOLUME /var/lib/mysql /var/www/localhost /tmp
 
-CMD ["echo", "Data container for Wordpress"]
+CMD ["tail", "-f", "/dev/null"]

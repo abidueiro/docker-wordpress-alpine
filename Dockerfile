@@ -22,4 +22,3 @@ RUN export WORDPRESS_VERSION=latest \
 VOLUME /var/lib/mysql /var/www/localhost /tmp
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD ["tail", "-f", "/dev/null"]

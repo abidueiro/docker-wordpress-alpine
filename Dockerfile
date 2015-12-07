@@ -1,6 +1,8 @@
 FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
+COPY entrypoint.sh /
+
 RUN export WORDPRESS_VERSION=latest \
  && apk --update add openssl \
  && addgroup mysql mysql \
@@ -14,8 +16,10 @@ RUN export WORDPRESS_VERSION=latest \
  && mv /var/www/wordpress /var/www/localhost \
  && chown -R nginx:nogroup /var/www/localhost \
  && apk del openssl \
+ && chmod +x /entrypoint.sh \
  && rm -rf /var/cache/apk/*
 
 VOLUME /var/lib/mysql /var/www/localhost /tmp
 
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["tail", "-f", "/dev/null"]

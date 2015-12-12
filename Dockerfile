@@ -1,6 +1,8 @@
 FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
+LABEL keep=true
+
 COPY entrypoint.sh /
 
 RUN export WORDPRESS_VERSION=latest \

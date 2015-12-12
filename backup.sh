@@ -5,6 +5,8 @@ BACKUP_DIR=${2:-`realpath ./`}
 
 echo Backuping ${WORDPRESS_NAME} Wordpress data container into ${BACKUP_DIR}
 
+docker stop ${WORDPRESS_NAME}_mysql
+
 docker run --rm \
   -v ${BACKUP_DIR}:/usr/src \
   --volumes-from ${WORDPRESS_NAME}_volumes \
@@ -16,3 +18,6 @@ docker run --rm \
   --volumes-from ${WORDPRESS_NAME}_volumes \
   alpine:latest \
   tar cvf /usr/src/${WORDPRESS_NAME}_backup_www.tar -C /var/www/localhost .
+
+docker start ${WORDPRESS_NAME}_mysql
+

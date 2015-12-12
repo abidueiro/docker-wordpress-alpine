@@ -1,4 +1,4 @@
-# Wordpress on a 50MB Docker's image
+# Wordpress with 57MB Docker's image
 
 [![](https://badge.imagelayers.io/vibioh/wordpress:latest.svg)](https://imagelayers.io/?images=vibioh/wordpress:latest 'Get your own badge on imagelayers.io')
 

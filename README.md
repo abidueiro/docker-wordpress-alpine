@@ -2,7 +2,11 @@
 
 [![](https://badge.imagelayers.io/vibioh/wordpress:latest.svg)](https://imagelayers.io/?images=vibioh/wordpress:latest 'Get your own badge on imagelayers.io')
 
-[TOC]
+REPOSITORY                      VIRTUAL SIZE
+vibioh/php                      29.78 MB
+vibioh/wordpress                27.7 MB
+vibioh/mysql                    132.4 MB
+vibioh/maildev                  53.94 MB
 
 ## Forewords
 

@@ -52,7 +52,7 @@ Some explanations are welcome:
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
 * `-e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS!` option defines the username with its credentials that will have access to database created
 * `-l traefik.enable=false` option indicate to our reverse proxy Traefik to not associate subdomain to container
-* `--volumes-from wordpress` option is an important part too. In the `wordpress` container [Dockerfile](https://github.com/ViBiOh/docker-wordpress/blob/master/Dockerfile#L20), we defined a volume `/var/lib/mysql` and the same in `mysql` container [Dockerfile](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile#L15). This option tells Docker to map `mysql`'s volume to the `wordpress`'s one
+* `--volumes-from wordpress` option is an important part too. In the `wordpress` container [Dockerfile](https://github.com/ViBiOh/docker-wordpress/blob/master/Dockerfile#L24), we defined a volume `/var/lib/mysql` and the same in `mysql` container [Dockerfile](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile#L15). This option tells Docker to map `mysql`'s volume to the `wordpress`'s one
 * We don't use the `-p` to expose port 3306 to external connections (outside of host machine). Only Docker will need access to the container.
 
 ## SMTP Server Docker

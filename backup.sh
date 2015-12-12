@@ -9,6 +9,6 @@ docker run -d \
   --name ${WORDPRESS_NAME}_backup \
   -v ${BACKUP_DIR}:/usr/src \
   --volumes-from ${WORDPRESS_NAME}_volumes \
-  -w /usr/src \
   alpine:latest \
-  tar cvf ${WORDPRESS_NAME}_backup.tar /var/lib/mysql /var/www/localhost
+  cd /var/lib/mysql && tar cvf /usr/src/${WORDPRESS_NAME}_backup_mysql.tar . \
+  && cd /var/www/localhost && tar cvf /usr/src/${WORDPRESS_NAME}_backup_www.tar .

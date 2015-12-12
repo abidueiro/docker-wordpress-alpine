@@ -17,16 +17,13 @@ So we'll put all this informations in a data container which the only prupose is
 The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-wordpress/blob/master/Dockerfile).
 
     docker run \
-      -d \
-      --name wordpress \
+      --name wordpress_volumes \
       --read-only \
       vibioh/wordpress:latest
 
-
 Some explanations are welcome:
 
-* `-d` option start the container as a *daemon*
-* `--name wordpress` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
+* `--name wordpress_volumes` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
 * `--read-only` option define a read-only filesystem. The container is autorized to write data only in places specified in the `Dockerfile`
 
 ## Mysql Docker
@@ -37,24 +34,43 @@ The entrypoint of MySql's image allows us to create a database and user with cre
 
 The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile).
 
-    docker run \
-      -d \
-      --name mysql \
-      --read-only \
-      -e MYSQL_ROOT_PASSWORD=s3cr3t! \
+    docker run -d \
+      --name wordpress_mysql \
+      -e MYSQL_ROOT_PASSWORD=s3Cr3T! \
       -e MYSQL_DATABASE=wordpress \
       -e MYSQL_USER=wordpress \
       -e MYSQL_PASSWORD=W0RDPR3SS! \
-      --volumes-from wordpress \
+      -l traefik.enable=false \
+      --volumes-from wordpress_volumes \
+      --read-only \
       vibioh/mysql:latest
 
 Some explanations are welcome:
 
-* `-e MYSQL_ROOT_PASSWORD=s3cr3t!` option defines the root's password of MySql (MariaDB) used to initialize database structure
+* `-d` option start the container as a *daemon*
+* `-e MYSQL_ROOT_PASSWORD=s3Cr3T!` option defines the root's password of MySql (MariaDB) used to initialize database structure
 * `-e MYSQL_DATABASE=wordpress` option defines the database's name that will be created when the container starts
 * `-e MYSQL_USER=wordpress -e MYSQL_PASSWORD=W0RDPR3SS!` option defines the username with its credentials that will have access to database created
-* `--volumes-from wordpress` option is an important part too. In the `wordpress` container [Dockerfile](https://github.com/ViBiOh/docker-wordpress/blob/master/Dockerfile#L20), we defined a volume `/var/lib/mysql` and the same in `mysql` container [Dockerfile](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile#L15). This option tells Docker to map `mysql`'s volume to the `wordpress`'s one.
+* `-l traefik.enable=false` option indicate to our reverse proxy Traefik to not associate subdomain to container
+* `--volumes-from wordpress` option is an important part too. In the `wordpress` container [Dockerfile](https://github.com/ViBiOh/docker-wordpress/blob/master/Dockerfile#L20), we defined a volume `/var/lib/mysql` and the same in `mysql` container [Dockerfile](https://github.com/ViBiOh/docker-mysql/blob/master/Dockerfile#L15). This option tells Docker to map `mysql`'s volume to the `wordpress`'s one
 * We don't use the `-p` to expose port 3306 to external connections (outside of host machine). Only Docker will need access to the container.
+
+## SMTP Server Docker
+
+Wordpress need to send mails to users when account are created or to reset password. We use [MailDev](http://djfarrelly.github.io/MailDev/) for demonstration purpose.
+
+    docker run -d \
+      --name wordpress_mail \
+      -l traefik.port=1080 \
+      -l traefik.frontend.passHostHeader=true \
+      --read-only \
+      vibioh/maildev:latest \
+      --web-user admin --web-pass password
+
+Some explanations are welcome:
+
+* `-l traefik.port=1080` option indicate to Traefik which port has to be exposed for subdomain. Traefik listen Docker's daemon and scan container's metadata for auto-configuration
+* `-l traefik.frontend.passHostHeader=true` option indicate to Traefik to pass Host Header when acting as a reverse proxy
 
 ## Wordpress Docker
 
@@ -62,31 +78,26 @@ Wordpress needs is a HTTP server, with PHP enabled and zlib to uncompress module
 
 The full Dockerfile is available on my [GitHub account](https://github.com/ViBiOh/docker-php/blob/master/Dockerfile).
 
-    docker run \
-      -d \
-      --name nginx \
-      --read-only \
-      --link mysql:mysql \
-      --volumes-from wordpress \
-      -p 7000:1080 \
+    docker run -d \
+      --name wordpress \
+      --link wordpress_mysql:db \
+      --link wordpress_mail:smtp \
+      -e SMTP_URL=smtp \
+      -e SMTP_PORT=1025 \
+      -l traefik.port=1080 \
+      -l traefik.frontend.passHostHeader=true \
+      --volumes-from wordpress_volumes \
       vibioh/php:latest
 
 Some explanations are welcome:
 
-* `--link mysql:mysql` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `mysql` (first one) to our new container with the name `mysql`. What Docker does is to modify the `/etc/hosts` to match container's ip to the given alias.
-* `-p 7000:1080` option defines that container's port **1080** (second one) will be accessible via the host's public port **7000** (first one). This is important for a web server to be accessible to the entire world. In container, we define the nginx port to **1080** so we can run nginx as a non-root user (opening port below 1024 require root access). In the host, you can define the port **80** if there's no server on that part, or an other port and user a reverse proxy (like nginx !).
+* `--link wordpress_mysql:db` option is the most interesting one. Our MySql container doesn't expose any port to the outside world and even if, we don't want to manage its IP. So we link the container `wordpress_mysql` to our new container with the name `db`. What Docker does is to modify the `/etc/hosts` to match container's ip to the given alias.
 
 ## Configuring Wordpress
 
-You can now browse to [Wordpress admin](http://blog.vibioh.fr/wp-admin/) to install and start configuring your blog :)
+You can now browse to [Wordpress admin](http://docker-IP/) to install and start configuring your blog :)
 
 ![](./wp_configure.png)
-
-## With docker-compose ?
-
-Starting and linking containers can be tedious and generate a lot of command line. Docker offers the possibility to start multiple related containers with **docker-compose**. The file `docker-compose.yml` define every configuration explained before and offer a simple command to start it :
-
-    docker-compose up -d
 
 ## On an `armhf` infrastructure
 

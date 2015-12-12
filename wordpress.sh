@@ -3,7 +3,7 @@
 WORDPRESS_NAME=${1:-wordpress}
 PASSWORD=${2:-W0rdPr3Ss!}
 
-docker run -d \
+docker run \
   --name ${WORDPRESS_NAME}_volumes \
   --read-only \
   vibioh/wordpress:latest

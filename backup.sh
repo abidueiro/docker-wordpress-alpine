@@ -1,23 +1,24 @@
 #!/bin/sh
 
-WORDPRESS_NAME=${1:-wordpress}
+CONTAINER_PREFIX=${1:-wordpress}
 BACKUP_DIR=${2:-`realpath ./`}
+BACKUP_SUFFIX=${3:-backup}
 
-echo Backuping ${WORDPRESS_NAME} Wordpress data container into ${BACKUP_DIR}
+echo Backuping ${CONTAINER_PREFIX} containers into ${BACKUP_DIR} with ${BACKUP_SUFFIX}
 
-docker stop ${WORDPRESS_NAME}_mysql
-
-docker run --rm \
-  -v ${BACKUP_DIR}:/usr/src \
-  --volumes-from ${WORDPRESS_NAME}_volumes \
-  alpine:latest \
-  tar cvf /usr/src/${WORDPRESS_NAME}_backup_mysql.tar -C /var/lib/mysql .
+docker stop ${CONTAINER_PREFIX}_mysql
 
 docker run --rm \
   -v ${BACKUP_DIR}:/usr/src \
-  --volumes-from ${WORDPRESS_NAME}_volumes \
+  --volumes-from ${CONTAINER_PREFIX}_data \
   alpine:latest \
-  tar cvf /usr/src/${WORDPRESS_NAME}_backup_www.tar -C /var/www/localhost .
+  tar cvf /usr/src/${CONTAINER_PREFIX}_${BACKUP_SUFFIX}_mysql.tar -C /var/lib/mysql .
 
-docker start ${WORDPRESS_NAME}_mysql
+docker run --rm \
+  -v ${BACKUP_DIR}:/usr/src \
+  --volumes-from ${CONTAINER_PREFIX}_data \
+  alpine:latest \
+  tar cvf /usr/src/${CONTAINER_PREFIX}_${BACKUP_SUFFIX}_www.tar -C /var/www/localhost .
+
+docker start ${CONTAINER_PREFIX}_mysql
 

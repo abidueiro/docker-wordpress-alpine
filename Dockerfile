@@ -2,8 +2,8 @@ FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 LABEL keep=true
-ENV MYSQL_DIR=/var/lib/mysql
-ENV WWW_DIR=/var/www/localhost
+ENV MYSQL_DIR /var/lib/mysql
+ENV WWW_DIR /var/www/localhost
 
 COPY entrypoint.sh /
 

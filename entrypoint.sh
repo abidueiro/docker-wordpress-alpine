@@ -1,4 +1,4 @@
 #!/bin/sh
 
-chown -R nginx:nogroup /var/www/localhost
-chown -R mysql:mysql /var/lib/mysql
+chown -R nginx:nogroup ${WWW_DIR}
+chown -R mysql:mysql ${MYSQL_DIR}

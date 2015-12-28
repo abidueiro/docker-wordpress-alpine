@@ -1,24 +1,26 @@
 #!/bin/sh
 
-CONTAINER_PREFIX=${1:-wordpress}
-BACKUP_DIR=${2:-`realpath ./`}
-BACKUP_SUFFIX=${3:-backup}
+CONTAINER_NAME=${1:-wordpress}
+BACKUP_SUFFIX=${2:-backup}
+BACKUP_DIR=${3:-`realpath ./`}
+MYSQL_CONTAINER=${4:-${CONTAINER_NAME}_mysql}
+DATA_CONTAINER=${5:-${CONTAINER_NAME}_data}
 
-echo Restoring ${CONTAINER_PREFIX} containers from ${BACKUP_DIR} with ${BACKUP_SUFFIX}
+MYSQL_DIR=/var/lib/mysql
+WWW_DIR=/var/www/localhost
 
-docker stop ${CONTAINER_PREFIX}_mysql
+echo Restoring ${CONTAINER_NAME} containers from ${BACKUP_DIR} with ${BACKUP_SUFFIX}
+
+docker stop ${MYSQL_CONTAINER}
 
 docker run --rm \
   -v ${BACKUP_DIR}:/usr/src \
-  --volumes-from ${CONTAINER_PREFIX}_data \
+  --volumes-from ${DATA_CONTAINER} \
   alpine:latest \
-  tar xvf /usr/src/${CONTAINER_PREFIX}_${BACKUP_SUFFIX}_mysql.tar -C /var/lib/mysql
+  sh -c 'tar xvzf /usr/src/'${CONTAINER_NAME}'_'${BACKUP_SUFFIX}'.tar.gz -C /tmp \
+  && rm -rf '${MYSQL_DIR}' '${WWW_DIR}' \
+  && tar xvf /tmp/www.tar -C '${WWW_DIR}' \
+  && tar xvf /tmp/mysql.tar -C '${MYSQL_DIR}
 
-docker run --rm \
-  -v ${BACKUP_DIR}:/usr/src \
-  --volumes-from ${CONTAINER_PREFIX}_data \
-  alpine:latest \
-  tar xvf /usr/src/${CONTAINER_PREFIX}_${BACKUP_SUFFIX}_www.tar -C /var/www/localhost
-
-docker start ${CONTAINER_PREFIX}_data ${CONTAINER_PREFIX}_mysql
+docker start ${DATA_CONTAINER} ${MYSQL_CONTAINER}
 

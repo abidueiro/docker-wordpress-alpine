@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [[ ${#} -eq 0 ]]; then
+  Usage: restore.sh [name] [suffix] [directory]
+fi
+
 CONTAINER_NAME=${1:-wordpress}
 BACKUP_SUFFIX=${2:-backup}
 BACKUP_DIR=${3:-`realpath ./`}

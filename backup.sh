@@ -21,7 +21,7 @@ docker run --rm \
   -v ${BACKUP_DIR}:/usr/src \
   --volumes-from ${DATA_CONTAINER} \
   alpine:latest \
-  sh -c 'tar cvf /tmp/mysql.tar -C '${MYSQL_DIR}' . \
+  sh -c 'tar cvf /tmp/mysql.tar -C '${MYSQL_DIR}' --exclude mysqld.sock --exclude *.pid . \
   && tar cvf /tmp/www.tar -C '${WWW_DIR}' . \
   && tar cvzf /usr/src/'${CONTAINER_NAME}'_'${BACKUP_SUFFIX}'.tar.gz -C /tmp mysql.tar www.tar'
 

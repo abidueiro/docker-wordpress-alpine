@@ -24,7 +24,7 @@ docker run --rm \
   sh -c 'tar xvzf /usr/src/'${CONTAINER_NAME}'_'${BACKUP_SUFFIX}'.tar.gz -C /tmp \
   && rm -rf '${MYSQL_DIR}'/* '${WWW_DIR}'/* \
   && tar xvf /tmp/www.tar -C '${WWW_DIR}' \
-  && tar xvf /tmp/mysql.tar -C '${MYSQL_DIR}
+  && tar xvf /tmp/mysql.tar --exclude mysqld.sock --exclude *.pid -C '${MYSQL_DIR}
 
 docker start ${DATA_CONTAINER} ${MYSQL_CONTAINER}
 

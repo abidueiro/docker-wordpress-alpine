@@ -1,7 +1,8 @@
 #!/bin/sh
 
 if [[ ${#} -eq 0 ]]; then
-  Usage: restore.sh [name] [suffix] [directory]
+  echo Usage: restore.sh [name] [suffix] [directory]
+  exit
 fi
 
 CONTAINER_NAME=${1:-wordpress}

@@ -1,7 +1,8 @@
 #!/bin/sh
 
 if [[ ${#} -eq 0 ]]; then
-  Usage: start.sh [name] [password]
+  echo Usage: start.sh [name] [password]
+  exit
 fi
 
 CONTAINER_NAME=${1:-wordpress}

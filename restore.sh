@@ -28,4 +28,3 @@ docker run --rm \
   && tar xvf /tmp/mysql.tar --exclude mysqld.sock --exclude *.pid -C '${MYSQL_DIR}
 
 docker start ${DATA_CONTAINER} ${MYSQL_CONTAINER}
-

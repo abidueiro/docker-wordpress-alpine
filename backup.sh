@@ -27,4 +27,3 @@ docker run --rm \
   && tar cvzf /usr/src/'${CONTAINER_NAME}'_'${BACKUP_SUFFIX}'.tar.gz -C /tmp mysql.tar www.tar'
 
 docker start ${MYSQL_CONTAINER}
-

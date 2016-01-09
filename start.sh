@@ -51,4 +51,3 @@ docker run -d \
   -m 256M \
   --cpu-shares=512 \
   vibioh/php:latest
-

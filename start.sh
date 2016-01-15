@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ ${#} -eq 0 ]]; then
+if [ "${#}" -eq 0 ]; then
   echo Usage: start.sh [name] [password]
   exit
 fi

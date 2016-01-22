@@ -1,7 +1,7 @@
 FROM alpine:latest
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
-LABEL keep=true
+LABEL keep true
 ENV MYSQL_DIR /var/lib/mysql
 ENV WWW_DIR /var/www/localhost
 

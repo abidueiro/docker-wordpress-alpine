@@ -13,6 +13,7 @@ RUN export WORDPRESS_VERSION=latest \
  && userdel -f nginx \
  && adduser -u 1000 -S -s /sbin/nologin mysql \
  && adduser -u 1001 -S -s /sbin/nologin nginx \
+ && groupdel mysql \
  && addgroup -g 60 mysql \
  && addgroup mysql mysql \
  && mkdir -p ${MYSQL_DIR} \

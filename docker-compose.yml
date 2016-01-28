@@ -33,7 +33,11 @@ maildev:
   - --web-pass
   - ${MAILDEV_PASSWORD} 
   labels:
-    traefik.enable: 'false'
+  labels:
+    traefik.frontend.value: '${WORDPRESS_NAME}-maildev.${DOMAIN}'
+    traefik.frontend.passHostHeader: 'true'
+    traefik.frontend.rule: 'Host'
+    traefik.port: '1080'
   log_opt:
     max-size: '50m'
   restart: 'no'

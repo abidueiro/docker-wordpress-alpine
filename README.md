@@ -104,7 +104,7 @@ To do that, you have to build your own ARM images from the same Dockerfile used 
 
 ## Use of docker-compose
 
-Define environment variables `WORDPRESS_NAME`, `MYSQL_PASSWORD`, `WORDPRESS_PASSWORD` to configure variables interpolations and also `DOMAIN` if you use [Traefik](https://traefik.github.io/).
+Define environment variables `WORDPRESS_NAME`, `MYSQL_PASSWORD`, `WORDPRESS_PASSWORD` and `MAILDEV_PASSWORD` to configure variables interpolations and also `DOMAIN` if you use [Traefik](https://traefik.github.io/).
 
 ```bash
 docker-compose -p ${WORDPRESS_NAME} up -d

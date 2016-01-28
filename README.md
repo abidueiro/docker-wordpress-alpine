@@ -32,7 +32,7 @@ Some explanations are welcome:
 * `--name wordpress` option gives a name to the container. It's especially important in our case. Next, we will link containers and they must be referenced by name
 * `--read-only` option define a read-only filesystem. The container is autorized to write data only in places specified in the `Dockerfile`
 
-## Mysql Docker
+## MySql Docker
 
 Wordpress works pretty well with MySql, so we will start a container for it.
 

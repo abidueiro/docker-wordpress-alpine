@@ -102,6 +102,14 @@ This tutorial has been executed on a standard architecture (x68/x64) architectur
 
 To do that, you have to build your own ARM images from the same Dockerfile used for building standard images. The only thing that change is the base `alpine` image, an ARM one. All behave the same way if you don't forget to add the `-arm` to every image's name.
 
+## Use of docker-compose
+
+Define environment variables `WORDPRESS_NAME`, `MYSQL_PASSWORD`, `WORDPRESS_PASSWORD` to configure variables interpolations and also `DOMAIN` if you use [Traefik](https://traefik.github.io/).
+
+```bash
+docker-compose -p ${WORDPRESS_NAME} up -d
+```
+
 ### Create a MySql image
 
     git clone https://github.com/ViBiOh/docker-mysql.git

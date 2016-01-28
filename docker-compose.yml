@@ -56,6 +56,7 @@ php:
     SMTP_PORT: '1025'
   links:
   - mysql:db
+  - maildev:smtp
   volumes_from:
   - wordpress
   log_opt:

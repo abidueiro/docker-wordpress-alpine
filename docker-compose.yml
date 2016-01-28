@@ -13,10 +13,10 @@ mysql:
   labels:
     traefik.enable: false
   environment:
-  - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
-  - MYSQL_DATABASE=wordpress
-  - MYSQL_USER=wordpress
-  - MYSQL_PASSWORD=${WORDPRESS_PASSWORD}
+  - MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+  - MYSQL_DATABASE: wordpress
+  - MYSQL_USER: wordpress
+  - MYSQL_PASSWORD: ${WORDPRESS_PASSWORD}
   volumes_from:
   - wordpress
   log_opt:

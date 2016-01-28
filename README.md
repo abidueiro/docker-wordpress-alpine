@@ -12,6 +12,14 @@
 
 All images used in this guide are based on the latest [Alpine image](https://registry.hub.docker.com/_/alpine/). A very light Linux distributions, shipped with nothing, perfect for making one role image.
 
+## Quick start with Docker Compose
+
+Define environment variables `WORDPRESS_NAME`, `MYSQL_PASSWORD`, `WORDPRESS_PASSWORD` and `MAILDEV_PASSWORD` to configure variables interpolations and also `DOMAIN` if you use [Traefik](https://traefik.github.io/).
+
+```bash
+docker-compose -p ${WORDPRESS_NAME} up -d
+```
+
 ## Wordpress Data Docker
 
 Wordpress is written in PHP and is provided as a directory that you simply have to deploy in your web server. This directory also contains the `wp-content` directory, the one that makes your blog very unique. We want to keep this directory in a safe zone, where we can make easy backup. Also, Wordpress stores data in a relational database, commonly MySQL. As the `wp-content` directory, we want to keep datas in a the database in a safe place.
@@ -101,14 +109,6 @@ You can now browse to [Wordpress admin](http://docker-IP/) to install and start 
 This tutorial has been executed on a standard architecture (x68/x64) architecture. You can run it on an ARM infrastructure (e.g. a Raspberry Pi2 running [HypriotOS](http://blog.hypriot.com)).
 
 To do that, you have to build your own ARM images from the same Dockerfile used for building standard images. The only thing that change is the base `alpine` image, an ARM one. All behave the same way if you don't forget to add the `-arm` to every image's name.
-
-## Use of docker-compose
-
-Define environment variables `WORDPRESS_NAME`, `MYSQL_PASSWORD`, `WORDPRESS_PASSWORD` and `MAILDEV_PASSWORD` to configure variables interpolations and also `DOMAIN` if you use [Traefik](https://traefik.github.io/).
-
-```bash
-docker-compose -p ${WORDPRESS_NAME} up -d
-```
 
 ### Create a MySql image
 

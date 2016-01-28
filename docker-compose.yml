@@ -1,9 +1,9 @@
 wordpress:
   image: vibioh/wordpress:latest
   labels:
-    io.rancher.container.start_once: true
-    io.rancher.sidekicks: mysql, php
-    traefik.enable: false
+    io.rancher.container.start_once: 'true'
+    io.rancher.sidekicks: 'mysql, php'
+    traefik.enable: 'false'
   restart: 'no'
   read_only: true
   cpu_shares: 128
@@ -11,12 +11,12 @@ wordpress:
 mysql:
   image: vibioh/mysql:latest
   labels:
-    traefik.enable: false
+    traefik.enable: 'false'
   environment:
-  - MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-  - MYSQL_DATABASE: wordpress
-  - MYSQL_USER: wordpress
-  - MYSQL_PASSWORD: ${WORDPRESS_PASSWORD}
+    MYSQL_ROOT_PASSWORD: '${MYSQL_PASSWORD}'
+    MYSQL_DATABASE: 'wordpress'
+    MYSQL_USER: 'wordpress'
+    MYSQL_PASSWORD: '${WORDPRESS_PASSWORD}'
   volumes_from:
   - wordpress
   log_opt:
@@ -33,8 +33,8 @@ php:
     traefik.frontend.rule: 'Host'
     traefik.port: '1080'
   environment:
-    SMTP_URL: smtp
-    SMTP_PORT: 1025
+    SMTP_URL: 'smtp'
+    SMTP_PORT: '1025'
   links:
   - mysql
   volumes_from:

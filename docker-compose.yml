@@ -31,7 +31,7 @@ maildev:
   - --web-user
   - admin
   - --web-pass
-  - password
+  - ${MAILDEV_PASSWORD} 
   labels:
     traefik.enable: 'false'
   log_opt:

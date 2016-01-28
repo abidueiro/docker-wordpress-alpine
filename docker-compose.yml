@@ -25,6 +25,21 @@ mysql:
   read_only: true
   cpu_shares: 512
   mem_limit: 268435456
+maildev:
+  image: vibioh/maildev:latest
+  command :
+  - --web-user
+  - admin
+  - --web-pass
+  - password
+  labels:
+    traefik.enable: 'false'
+  log_opt:
+    max-size: '50m'
+  restart: 'no'
+  read_only: true
+  cpu_shares: 128
+  mem_limit: 67108864
 php:
   image: vibioh/php:latest
   labels:

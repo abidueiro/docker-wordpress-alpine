@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.3
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 LABEL keep true

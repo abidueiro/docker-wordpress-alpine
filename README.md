@@ -110,32 +110,6 @@ You can now browse to [Wordpress admin](http://docker-IP/) to install and start 
 
 This tutorial has been executed on a standard architecture (x68/x64) architecture. You can run it on an ARM infrastructure (e.g. a Raspberry Pi2 running [HypriotOS](http://blog.hypriot.com)).
 
-To do that, you have to build your own ARM images from the same Dockerfile used for building standard images. The only thing that change is the base `alpine` image, an ARM one. All behave the same way if you don't forget to add the `-arm` to every image's name.
+All images are based on Alpine, so I have rebuilt all of them using my own Alpine builded on an ARM. Checkout the `arm` branch and run the compose !
 
-### Create a MySql image
-
-    git clone https://github.com/ViBiOh/docker-mysql.git
-    cd docker-mysql
-    sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
-    docker build -t vibioh/mysql-arm --rm .
-
-### Create a nginx image
-
-    git clone https://github.com/ViBiOh/docker-nginx.git
-    cd docker-nginx
-    sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
-    docker build -t vibioh/nginx-arm --rm .
-
-### Create a php image
-
-    git clone https://github.com/ViBiOh/docker-php.git
-    cd docker-php
-    sed -i "s/vibioh\/nginx/vibioh\/nginx-arm/" Dockerfile
-    docker build -t vibioh/php-arm --rm .
-
-### Create a Wordpress image
-
-    git clone https://github.com/ViBiOh/docker-wordpress.git
-    cd docker-wordpress
-    sed -i "s/alpine/vibioh\/alpine-arm/" Dockerfile
-    docker build -t vibioh/wordpress-arm --rm .
+N.B. At the time, NodeJS is not working on ARM so maildev was turned of.

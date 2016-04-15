@@ -1,6 +1,6 @@
 # Wordpress with 60MB Docker's image
 
-[![](https://badge.imagelayers.io/vibioh/wordpress:latest.svg)](https://imagelayers.io/?images=vibioh/wordpress:latest 'Get your own badge on imagelayers.io')
+[![Build Status](https://travis-ci.org/ViBiOh/docker-wordpress.svg?branch=master)](https://travis-ci.org/ViBiOh/docker-wordpress) [![](https://badge.imagelayers.io/vibioh/wordpress:latest.svg)](https://imagelayers.io/?images=vibioh/wordpress:latest 'Get your own badge on imagelayers.io')
 
 ```
 REPOSITORY                      VIRTUAL SIZE

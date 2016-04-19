@@ -34,9 +34,8 @@ maildev:
   - ${MAILDEV_PASSWORD} 
   labels:
   labels:
-    traefik.frontend.value: '${WORDPRESS_NAME}-maildev.${DOMAIN}'
     traefik.frontend.passHostHeader: 'true'
-    traefik.frontend.rule: 'Host'
+    traefik.frontend.rule: 'Host: ${WORDPRESS_NAME}-maildev.${DOMAIN}'
     traefik.port: '1080'
   log_opt:
     max-size: '50m'
@@ -47,9 +46,8 @@ maildev:
 php:
   image: vibioh/php
   labels:
-    traefik.frontend.value: '${WORDPRESS_NAME}.${DOMAIN}'
     traefik.frontend.passHostHeader: 'true'
-    traefik.frontend.rule: 'Host'
+    traefik.frontend.rule: 'Host: ${WORDPRESS_NAME}.${DOMAIN}'
     traefik.port: '1080'
   environment:
     SMTP_URL: 'smtp'

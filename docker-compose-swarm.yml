@@ -1,0 +1,70 @@
+version: '2'
+
+services:
+  wordpress:
+    image: vibioh/wordpress
+    labels:
+      io.rancher.container.start_once: 'true'
+      io.rancher.sidekicks: 'mysql, php'
+      traefik.enable: 'false'
+    restart: 'no'
+    read_only: true
+  mysql:
+    image: vibioh/mysql
+    labels:
+      traefik.enable: 'false'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_PASSWORD}'
+      MYSQL_DATABASE: 'wordpress'
+      MYSQL_USER: 'wordpress'
+      MYSQL_PASSWORD: '${WORDPRESS_PASSWORD}'
+    volumes_from:
+    - wordpress
+    logging:
+      driver: json-file
+      options:
+        max-size: '50m'
+    restart: 'no'
+    read_only: true
+  maildev:
+    image: vibioh/maildev
+    command :
+    - --web-user
+    - admin
+    - --web-pass
+    - ${MAILDEV_PASSWORD} 
+    labels:
+    labels:
+      traefik.frontend.passHostHeader: 'true'
+      traefik.frontend.rule: 'Host: ${WORDPRESS_NAME}-maildev.${DOMAIN}'
+      traefik.port: '1080'
+    logging:
+      driver: json-file
+      options:
+        max-size: '50m'
+    restart: 'no'
+    read_only: true
+  php:
+    image: vibioh/php
+    labels:
+      traefik.frontend.passHostHeader: 'true'
+      traefik.frontend.rule: 'Host: ${WORDPRESS_NAME}.${DOMAIN}'
+      traefik.port: '1080'
+    environment:
+      SMTP_URL: 'smtp'
+      SMTP_PORT: '1025'
+    links:
+    - mysql:db
+    - maildev:smtp
+    volumes_from:
+    - wordpress
+    logging:
+      driver: json-file
+      options:
+        max-size: '50m'
+    restart: 'no'
+
+networks:
+  default:
+    external:
+      name: swarm-net

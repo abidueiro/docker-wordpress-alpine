@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM hypriot/rpi-alpine-scratch
 MAINTAINER Vincent Boutour <vincent.boutour@gmail.com>
 
 LABEL keep true
